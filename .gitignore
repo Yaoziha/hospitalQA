@@ -1,0 +1,5 @@
+# 忽略所有 node_modules 文件夹
+node_modules/
+
+# 特别指定云函数中的 node_modules
+cloudfunctions/*/node_modules/ 
