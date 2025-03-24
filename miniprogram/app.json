@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/qa/index",
+    "pages/qa-admin/index"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "患者宣教小助手",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "color": "#A2A9B0",
+    "selectedColor": "#07C160",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/qa/index",
+        "text": "宣教问答"
+      },
+      {
+        "pagePath": "pages/qa-admin/index",
+        "text": "管理"
+      }
+    ]
+  }
+}
