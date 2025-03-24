@@ -16,16 +16,20 @@
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {
     "color": "#A2A9B0",
-    "selectedColor": "#07C160",
+    "selectedColor": "#1296db",
     "backgroundColor": "#ffffff",
     "list": [
       {
         "pagePath": "pages/qa/index",
-        "text": "宣教问答"
+        "text": "宣教问答",
+        "iconPath": "images/tabbar/home.png",
+        "selectedIconPath": "images/tabbar/home-active.png"
       },
       {
         "pagePath": "pages/qa-admin/index",
-        "text": "管理"
+        "text": "管理",
+         "iconPath": "images/tabbar/venue.png",
+        "selectedIconPath": "images/tabbar/venue-active.png"
       }
     ]
   }

@@ -18,8 +18,13 @@ Page({
     const username = wx.getStorageSync('username') || '';
     this.setData({
       isAdmin: username === 'ads',
-      username: username
+      username: username,
+      // 每次显示页面时清空输入框
+      inputQuestion: ''
     });
+    
+    // 每次显示页面时重新获取问答列表
+    this.fetchQAList();
   },
 
   // 获取问答列表
@@ -59,6 +64,13 @@ Page({
   onInputChange: function(e) {
     this.setData({
       inputQuestion: e.detail.value
+    });
+  },
+
+  // 清空输入框
+  clearInput: function() {
+    this.setData({
+      inputQuestion: ''
     });
   },
 

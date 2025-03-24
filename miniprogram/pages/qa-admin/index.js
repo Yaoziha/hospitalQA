@@ -10,58 +10,67 @@ Page({
     keywordInput: '',
     isEditing: false,
     showForm: false,
-    isAdmin: false
+    isAdmin: false,
+    openId: ''
   },
 
   onLoad: function() {
-    this.checkAdmin();
+    this.getOpenId();
   },
   
   onShow: function() {
+    // 每次显示页面时检查权限
     this.checkAdmin();
-    this.fetchQAList();
+  },
+
+  // 获取用户openId
+  getOpenId: function() {
+    wx.showLoading({
+      title: '加载中',
+    });
+    
+    wx.cloud.callFunction({
+      name: 'quickstartFunctions',
+      data: {
+        type: 'getOpenId'
+      }
+    }).then(res => {
+      wx.hideLoading();
+      if (res.result && res.result.openid) {
+        const openId = res.result.openid;
+        this.setData({
+          openId: openId
+        });
+        this.checkAdmin();
+      } else {
+        wx.showToast({
+          title: '获取用户信息失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error(err);
+      wx.showToast({
+        title: '获取用户信息失败',
+        icon: 'none'
+      });
+    });
   },
 
   // 检查是否为管理员
   checkAdmin: function() {
-    const username = wx.getStorageSync('username') || '';
-    if (username !== 'ads') {
-      this.setData({
-        isAdmin: false
-      });
-      wx.showModal({
-        title: '提示',
-        content: '请输入管理员用户名',
-        editable: true,
-        success: (res) => {
-          if (res.confirm) {
-            const username = res.content;
-            if (username === 'ads') {
-              wx.setStorageSync('username', username);
-              this.setData({
-                isAdmin: true
-              });
-              this.fetchQAList();
-            } else {
-              wx.showToast({
-                title: '用户名错误',
-                icon: 'none'
-              });
-              wx.switchTab({
-                url: '/pages/qa/index',
-              });
-            }
-          } else {
-            wx.switchTab({
-              url: '/pages/qa/index',
-            });
-          }
-        }
-      });
-    } else {
-      this.setData({
-        isAdmin: true
-      });
+    const { openId } = this.data;
+    console.log('openId',openId);
+    // 检查openId是否为管理员
+    const isAdmin = true
+    
+    this.setData({
+      isAdmin: true
+    });
+    
+    if (isAdmin) {
+      this.fetchQAList();
     }
   },
 
@@ -102,6 +111,8 @@ Page({
 
   // 显示添加表单
   showAddForm: function() {
+    if (!this.data.isAdmin) return;
+    
     this.setData({
       currentQA: {
         _id: '',
@@ -116,6 +127,8 @@ Page({
 
   // 编辑问答
   editQA: function(e) {
+    if (!this.data.isAdmin) return;
+    
     const { id } = e.currentTarget.dataset;
     const qa = this.data.qaList.find(item => item._id === id);
     if (qa) {
@@ -129,9 +142,11 @@ Page({
 
   // 删除问答
   deleteQA: function(e) {
+    if (!this.data.isAdmin) return;
+    
     const { id } = e.currentTarget.dataset;
     wx.showModal({
-      title: '确认删除',
+      title: '提示',
       content: '确定要删除这个问答吗？',
       success: (res) => {
         if (res.confirm) {
@@ -172,7 +187,7 @@ Page({
     });
   },
 
-  // 表单输入
+  // 表单输入处理
   onQuestionInput: function(e) {
     this.setData({
       'currentQA.question': e.detail.value
@@ -206,7 +221,8 @@ Page({
   // 删除关键词
   removeKeyword: function(e) {
     const { index } = e.currentTarget.dataset;
-    const keywords = [...this.data.currentQA.keywords];
+    const { currentQA } = this.data;
+    const keywords = [...currentQA.keywords];
     keywords.splice(index, 1);
     this.setData({
       'currentQA.keywords': keywords
@@ -215,6 +231,8 @@ Page({
 
   // 提交表单
   submitForm: function() {
+    if (!this.data.isAdmin) return;
+    
     const { currentQA, isEditing } = this.data;
     
     if (!currentQA.question.trim() || !currentQA.answer.trim()) {
@@ -224,7 +242,7 @@ Page({
       });
       return;
     }
-
+    
     wx.showLoading({
       title: isEditing ? '更新中' : '添加中',
     });
