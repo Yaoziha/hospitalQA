@@ -72,5 +72,7 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "timeout": 10,
+  "envVariables": {}
 }

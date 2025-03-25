@@ -200,28 +200,40 @@ Page({
       wx.hideLoading();
       if (res.result && res.result.success) {
         if (res.result.found) {
+          // 显示找到的答案
           this.setData({
             currentAnswer: res.result.data.answer,
-            showAnswer: true
+            showAnswer: true,
+            answerSource: res.result.data.source || 'database' // 标记答案来源
           });
         } else {
+          // 没有找到答案，显示星火AI的回答
           this.setData({
-            currentAnswer: '建议挂号看医生',
-            showAnswer: true
+            currentAnswer: res.result.data.answer || '建议挂号看医生',
+            showAnswer: true,
+            answerSource: res.result.data.source || 'spark' // 标记为星火AI回答
           });
         }
       } else {
-        wx.showToast({
-          title: '查询失败',
-          icon: 'none'
+        wx.hideLoading();
+        console.error('查询失败:', err);
+        
+        // 不显示查询失败的提示，直接显示默认回答
+        this.setData({
+          currentAnswer: '建议挂号看医生',
+          showAnswer: true,
+          answerSource: 'default' // 标记为默认回答
         });
       }
     }).catch(err => {
       wx.hideLoading();
-      console.error(err);
-      wx.showToast({
-        title: '查询失败',
-        icon: 'none'
+      console.error('查询失败:', err);
+      
+      // 不显示查询失败的提示，直接显示默认回答
+      this.setData({
+        currentAnswer: '建议挂号看医生',
+        showAnswer: true,
+        answerSource: 'default' // 标记为默认回答
       });
     });
   },
