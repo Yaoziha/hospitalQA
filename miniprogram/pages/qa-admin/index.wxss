@@ -166,7 +166,7 @@
   color: #ff4d4f;
 }
 
-/* 修改表单弹窗样式 */
+/* 修改表单弹窗样式 - 自适应设备尺寸 */
 .form-modal {
   position: fixed;
   top: 0;
@@ -178,16 +178,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20rpx; /* 确保与屏幕边缘有距离 */
 }
 
 .form-content {
-  width: 90%;
-  max-height: 80vh;
+  width: 92%;
+  max-height: calc(100vh - 180rpx); /* 减去上下边距和tabbar高度 */
   background-color: #fff;
   border-radius: 12rpx;
   padding: 30rpx;
   box-sizing: border-box;
   overflow-y: auto;
+  margin-bottom: 60rpx; /* 确保与底部tabbar有距离 */
 }
 
 .form-title {
@@ -198,38 +200,50 @@
 }
 
 .form-item {
-  margin-bottom: 30rpx;
+  margin-bottom: 25rpx;
 }
 
 .form-label {
-  font-size: 28rpx;
+  font-size: 30rpx;
   color: #333;
-  margin-bottom: 10rpx;
+  margin-bottom: 12rpx;
+  font-weight: 500;
 }
 
-.form-input {
+/* 修复输入框样式 */
+textarea.form-input {
   width: 100%;
-  height: 120rpx; /* 调整高度更合理 */
+  min-height: 120rpx; /* 减小默认高度 */
   border: 1rpx solid #ddd;
   border-radius: 8rpx;
   padding: 20rpx;
   box-sizing: border-box;
   font-size: 28rpx;
+  line-height: 1.6;
 }
 
-/* 答案输入框可以更高一些 */
-.form-input.answer {
-  height: 200rpx;
+/* 问题输入框 */
+textarea.form-input.question {
+  min-height: 120rpx;
+  max-height: 200rpx; /* 限制最大高度 */
 }
 
+/* 答案输入框 */
+textarea.form-input.answer {
+  min-height: 180rpx;
+  max-height: 300rpx; /* 限制最大高度 */
+}
+
+/* 关键词输入区域 */
 .keyword-input-box {
   display: flex;
-  margin-bottom: 20rpx;
+  margin-bottom: 15rpx;
+  align-items: center;
 }
 
 .keyword-input {
   flex: 1;
-  height: 80rpx;
+  height: 70rpx; /* 减小高度 */
   border: 1rpx solid #ddd;
   border-radius: 8rpx;
   padding: 0 20rpx;
@@ -238,21 +252,54 @@
 }
 
 .keyword-add-btn {
-  width: 160rpx;
-  height: 80rpx;
-  line-height: 80rpx;
+  width: 140rpx; /* 减小宽度 */
+  height: 70rpx; /* 减小高度 */
+  line-height: 70rpx;
   background-color: #07C160;
   color: #fff;
   font-size: 28rpx;
-  margin-left: 20rpx;
+  margin-left: 20rpx !important;
   padding: 0;
   border-radius: 8rpx;
 }
 
+/* 关键词列表 */
+.keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10rpx;
+  max-height: 150rpx; /* 限制最大高度 */
+  overflow-y: auto;
+}
+
+.keyword {
+  background-color: #f0f9f4;
+  color: #07C160;
+  font-size: 26rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 30rpx;
+  margin-right: 12rpx;
+  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+}
+
+.keyword-delete {
+  margin-left: 8rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 表单按钮区域 */
 .form-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 40rpx;
+  margin-top: 30rpx;
+}
+
+/* 修复嵌套规则错误 */
+.form-actions .submit {
+  margin-left: 10rpx;
 }
 
 .form-btn {
@@ -261,7 +308,7 @@
   line-height: 80rpx;
   text-align: center;
   border-radius: 40rpx;
-  font-size: 28rpx;
+  font-size: 30rpx;
   padding: 0;
 }
 
@@ -275,16 +322,32 @@
   color: #fff;
 }
 
-/* 适配 iPhone X 及以上机型底部安全区域 */
+/* 适配不同设备高度 */
+@media screen and (max-height: 700px) {
+  .form-content {
+    max-height: calc(100vh - 140rpx);
+    padding: 25rpx;
+  }
+  
+  textarea.form-input.question {
+    min-height: 100rpx;
+  }
+  
+  textarea.form-input.answer {
+    min-height: 150rpx;
+  }
+}
+
+/* 适配iPhone X等带有安全区域的设备 */
 @supports (padding-bottom: constant(safe-area-inset-bottom)) {
-  .form-container {
-    padding-bottom: constant(safe-area-inset-bottom);
+  .form-modal {
+    padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
   }
 }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .form-container {
-    padding-bottom: env(safe-area-inset-bottom);
+  .form-modal {
+    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   }
 }
 
