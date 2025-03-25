@@ -190,52 +190,69 @@ Page({
       title: '查询中',
     });
     
-    wx.cloud.callFunction({
+    // 设置超时处理
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          result: {
+            success: false,
+            errMsg: '查询超时'
+          }
+        });
+      }, 10000); // 10秒超时
+    });
+    
+    // 云函数调用
+    const cloudPromise = wx.cloud.callFunction({
       name: 'quickstartFunctions',
       data: {
         type: 'searchQA',
         keyword: keyword
       }
-    }).then(res => {
-      wx.hideLoading();
-      if (res.result && res.result.success) {
-        if (res.result.found) {
-          // 显示找到的答案
-          this.setData({
-            currentAnswer: res.result.data.answer,
-            showAnswer: true,
-            answerSource: res.result.data.source || 'database' // 标记答案来源
-          });
+    });
+    
+    // 使用 Promise.race 处理超时
+    Promise.race([cloudPromise, timeoutPromise])
+      .then(res => {
+        wx.hideLoading();
+        if (res.result && res.result.success) {
+          if (res.result.found) {
+            // 显示找到的答案
+            this.setData({
+              currentAnswer: res.result.data.answer,
+              showAnswer: true,
+              answerSource: res.result.data.source || 'database'
+            });
+          } else {
+            // 没有找到答案，显示默认回答
+            this.setData({
+              currentAnswer: res.result.data.answer || '建议挂号看医生',
+              showAnswer: true,
+              answerSource: res.result.data.source || 'default'
+            });
+          }
         } else {
-          // 没有找到答案，显示星火AI的回答
+          console.error('查询失败:', res.result ? res.result.errMsg : '未知错误');
+          
+          // 显示默认回答
           this.setData({
-            currentAnswer: res.result.data.answer || '建议挂号看医生',
+            currentAnswer: '建议挂号看医生',
             showAnswer: true,
-            answerSource: res.result.data.source || 'spark' // 标记为星火AI回答
+            answerSource: 'default'
           });
         }
-      } else {
+      })
+      .catch(err => {
         wx.hideLoading();
         console.error('查询失败:', err);
         
-        // 不显示查询失败的提示，直接显示默认回答
+        // 显示默认回答
         this.setData({
           currentAnswer: '建议挂号看医生',
           showAnswer: true,
-          answerSource: 'default' // 标记为默认回答
+          answerSource: 'default'
         });
-      }
-    }).catch(err => {
-      wx.hideLoading();
-      console.error('查询失败:', err);
-      
-      // 不显示查询失败的提示，直接显示默认回答
-      this.setData({
-        currentAnswer: '建议挂号看医生',
-        showAnswer: true,
-        answerSource: 'default' // 标记为默认回答
       });
-    });
   },
 
   // 关闭答案

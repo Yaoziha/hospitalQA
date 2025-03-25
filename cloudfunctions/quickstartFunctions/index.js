@@ -4,7 +4,7 @@
  * @Author: yaozihan
  * @Date: 2025-03-24 09:50:44
  * @LastEditors: yaozihan
- * @LastEditTime: 2025-03-25 14:34:27
+ * @LastEditTime: 2025-03-25 15:06:01
  */
 const getOpenId = require('./getOpenId/index');
 const getQAList = require('./getQAList/index');
@@ -16,8 +16,8 @@ const getAdmins = require('./getAdmins/index');
 const addAdmin = require('./addAdmin/index');
 const removeAdmin = require('./removeAdmin/index');
 
-// 引入 QA 服务模块
-const qaService = require('./qaService');
+// 引入优化后的 QA 服务模块
+const qaService = require('./qaService/index');
 
 // 云函数入口文件
 const cloud = require('wx-server-sdk');
