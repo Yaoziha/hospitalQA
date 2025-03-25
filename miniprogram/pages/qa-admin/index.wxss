@@ -162,6 +162,7 @@
   color: #ff4d4f;
 }
 
+/* 表单弹窗样式 */
 .form-modal {
   position: fixed;
   top: 0;
@@ -169,30 +170,30 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 30rpx;
 }
 
 .form-content {
-  width: 85%;
+  width: 100%;
+  max-height: 80vh; /* 最大高度为视口高度的80% */
   background-color: #fff;
-  border-radius: 12rpx;
-  padding: 40rpx;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  box-sizing: border-box;
+  position: relative;
+  margin: 60rpx 0; /* 上下都留出空间 */
+  overflow-y: auto; /* 内容过多时可滚动 */
 }
 
 .form-title {
   font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 30rpx;
-  color: #333;
   text-align: center;
-  padding-bottom: 20rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  margin-bottom: 30rpx;
 }
 
 .form-item {
@@ -202,92 +203,108 @@
 .form-label {
   font-size: 28rpx;
   color: #333;
-  margin-bottom: 15rpx;
-  font-weight: bold;
+  margin-bottom: 10rpx;
 }
 
 .form-input {
   width: 100%;
-  background-color: #f8f8f8;
-  border: 1rpx solid #e0e0e0;
+  height: 200rpx;
+  border: 1rpx solid #ddd;
   border-radius: 8rpx;
   padding: 20rpx;
-  font-size: 28rpx;
   box-sizing: border-box;
-  min-height: 200rpx;
-  color: #333;
+  font-size: 28rpx;
 }
 
 .keyword-input-box {
   display: flex;
   margin-bottom: 20rpx;
-  align-items: center;
 }
 
 .keyword-input {
   flex: 1;
-  background-color: #f8f8f8;
-  border: 1rpx solid #e0e0e0;
+  height: 80rpx;
+  border: 1rpx solid #ddd;
   border-radius: 8rpx;
-  padding: 20rpx;
-  font-size: 28rpx;
-  margin-right: 20rpx;
-  height: 70rpx;
+  padding: 0 20rpx;
   box-sizing: border-box;
+  font-size: 28rpx;
 }
 
 .keyword-add-btn {
+  width: 160rpx;
+  height: 80rpx;
+  line-height: 80rpx;
   background-color: #07C160;
   color: #fff;
   font-size: 28rpx;
-  padding: 0 30rpx;
-  height: 70rpx;
-  line-height: 70rpx;
+  margin-left: 20rpx;
+  padding: 0;
   border-radius: 8rpx;
-  flex-shrink: 0;
-  width: 140rpx;
+}
+
+.keyword-list {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.keyword {
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 24rpx;
+  padding: 10rpx 30rpx 10rpx 20rpx;
+  border-radius: 30rpx;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
+  position: relative;
 }
 
 .keyword-delete {
-  margin-left: 10rpx;
-  color: #ff4d4f;
-  font-weight: bold;
-  font-size: 28rpx;
+  position: absolute;
+  right: 10rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24rpx;
+  color: #999;
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 40rpx;
-  padding-top: 30rpx;
-  border-top: 1rpx solid #f0f0f0;
 }
 
 .form-btn {
   width: 45%;
   height: 80rpx;
   line-height: 80rpx;
+  text-align: center;
   border-radius: 40rpx;
   font-size: 28rpx;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
   padding: 0;
 }
 
 .cancel {
-  background-color: #f6f6f6;
+  background-color: #f5f5f5;
   color: #666;
 }
 
 .submit {
   background-color: #07C160;
   color: #fff;
+}
+
+/* 适配 iPhone X 及以上机型底部安全区域 */
+@supports (padding-bottom: constant(safe-area-inset-bottom)) {
+  .form-modal {
+    padding-bottom: constant(safe-area-inset-bottom);
+  }
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .form-modal {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 /* 重置按钮的默认样式 */

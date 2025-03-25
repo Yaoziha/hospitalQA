@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/qa/index",
-    "pages/qa-admin/index"
+    "pages/qa-admin/index",
+    "pages/admin-management/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
@@ -15,7 +16,8 @@
   "style": "v2",
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {
-    "color": "#A2A9B0",
+    "custom": true,
+    "color": "#999999",
     "selectedColor": "#1296db",
     "backgroundColor": "#ffffff",
     "list": [
@@ -28,7 +30,7 @@
       {
         "pagePath": "pages/qa-admin/index",
         "text": "管理",
-         "iconPath": "images/tabbar/venue.png",
+        "iconPath": "images/tabbar/venue.png",
         "selectedIconPath": "images/tabbar/venue-active.png"
       }
     ]
