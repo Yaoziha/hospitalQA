@@ -4,7 +4,7 @@
  * @Author: yaozihan
  * @Date: 2025-03-24 09:50:44
  * @LastEditors: yaozihan
- * @LastEditTime: 2025-03-25 10:32:18
+ * @LastEditTime: 2025-03-25 14:34:27
  */
 const getOpenId = require('./getOpenId/index');
 const getQAList = require('./getQAList/index');
@@ -46,6 +46,37 @@ exports.main = async (event, context) => {
       return await addAdmin.main(event, context);
     case 'removeAdmin':
       return await removeAdmin.main(event, context);
+    case 'addQA':
+      return await manageQA.main({
+        action: 'add',
+        data: {
+          question: event.data.question,
+          answer: event.data.answer,
+          keywords: event.data.keywords || []
+        }
+      }, context);
+    case 'updateQA':
+      return await manageQA.main({
+        action: 'update',
+        data: {
+          _id: event.data.id,
+          question: event.data.question,
+          answer: event.data.answer,
+          keywords: event.data.keywords || []
+        }
+      }, context);
+    case 'deleteQA':
+      return await manageQA.main({
+        action: 'delete',
+        data: {
+          _id: event.data.id
+        }
+      }, context);
+    default:
+      return {
+        success: false,
+        errMsg: '未知的操作类型'
+      };
   }
 };
         

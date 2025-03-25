@@ -181,14 +181,12 @@ Page({
 
   // 删除问答
   deleteQA: function(e) {
-    if (!this.data.isAdmin) return;
-    
     const id = e.currentTarget.dataset.id;
     
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这个问答吗？',
-      success: (res) => {
+      success: res => {
         if (res.confirm) {
           wx.showLoading({
             title: '删除中',
@@ -213,6 +211,7 @@ Page({
                 icon: 'success'
               });
             } else {
+              console.error('删除失败:', res);
               wx.showToast({
                 title: '删除失败',
                 icon: 'none'
@@ -220,7 +219,7 @@ Page({
             }
           }).catch(err => {
             wx.hideLoading();
-            console.error(err);
+            console.error('删除失败:', err);
             wx.showToast({
               title: '删除失败',
               icon: 'none'
