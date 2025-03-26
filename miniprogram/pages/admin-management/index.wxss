@@ -1,0 +1,134 @@
+.container {
+  padding: 30rpx;
+  background-color: #f6f6f6;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+  background-color: #fff;
+  padding: 30rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-list, .user-list {
+  margin-top: 20rpx;
+}
+
+.admin-item, .user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-info, .user-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.admin-avatar, .user-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.admin-avatar-placeholder, .user-avatar-placeholder {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #1296db;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.admin-name, .user-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.admin-openid, .user-openid {
+  font-size: 24rpx;
+  color: #999;
+  word-break: break-all;
+  max-width: 200rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-actions, .user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.add-btn {
+  background-color: #07C160;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 0 20rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 30rpx;
+  margin: 0;
+}
+
+.remove-btn {
+  background-color: #ff4d4f;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 0 20rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 30rpx;
+  margin: 0;
+}
+
+.empty-tip {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding: 40rpx 0;
+}
+
+.loading {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding: 20rpx 0;
+} 

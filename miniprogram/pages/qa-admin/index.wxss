@@ -1,8 +1,46 @@
 /* pages/qa-admin/index.wxss */
 .container {
-  padding: 30rpx;
-  background-color: #f6f6f6;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 20rpx 20rpx 120rpx 20rpx; /* 增加底部padding，为底部导航留出空间 */
+}
+
+/* 添加非管理员提示样式 */
+.no-permission {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 40rpx;
+  margin-top: 30rpx;
+}
+
+.no-permission-icon {
+  font-size: 100rpx;
+  margin-bottom: 30rpx;
+  color: #999;
+}
+
+.no-permission-text {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.permission-btn {
+  background-color: #07C160;
+  color: #fff;
+  font-size: 28rpx;
+  padding: 0 60rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 40rpx;
+  box-shadow: 0 4rpx 8rpx rgba(7, 193, 96, 0.2);
 }
 
 .header {
@@ -10,6 +48,10 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30rpx;
+  background-color: #fff;
+  padding: 30rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
 }
 
 .title {
@@ -26,18 +68,27 @@
   height: 70rpx;
   line-height: 70rpx;
   border-radius: 35rpx;
+  margin-left: 30rpx !important;
+  box-shadow: 0 4rpx 8rpx rgba(7, 193, 96, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .qa-list {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* 增强iOS滚动体验 */
+  padding-bottom: 120rpx; /* 确保内容底部有足够空间 */
 }
 
 .qa-item {
   background-color: #fff;
-  border-radius: 10rpx;
+  border-radius: 12rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
 .qa-content {
@@ -45,25 +96,31 @@
 }
 
 .qa-question {
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: bold;
   color: #333;
-  margin-bottom: 10rpx;
+  margin-bottom: 15rpx;
+  line-height: 1.4;
 }
 
 .qa-answer {
   font-size: 28rpx;
   color: #666;
-  margin-bottom: 10rpx;
+  margin-bottom: 15rpx;
+  line-height: 1.5;
+  word-break: break-all;
 }
 
 .qa-keywords {
   display: flex;
-  font-size: 24rpx;
-  color: #999;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 20rpx;
 }
 
 .keyword-label {
+  font-size: 24rpx;
+  color: #999;
   margin-right: 10rpx;
 }
 
@@ -73,7 +130,9 @@
 }
 
 .keyword {
-  background-color: #f0f0f0;
+  background-color: #f0f9f4;
+  color: #07C160;
+  font-size: 24rpx;
   padding: 6rpx 16rpx;
   border-radius: 20rpx;
   margin-right: 10rpx;
@@ -85,25 +144,29 @@
 .qa-actions {
   display: flex;
   justify-content: flex-end;
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 20rpx;
+  margin-top: 10rpx;
 }
 
 .action-btn {
-  padding: 10rpx 20rpx;
-  font-size: 24rpx;
-  border-radius: 6rpx;
+  padding: 10rpx 30rpx;
+  font-size: 26rpx;
+  border-radius: 30rpx;
   margin-left: 20rpx;
 }
 
 .edit {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f0f9f4;
+  color: #07C160;
 }
 
 .delete {
-  background-color: #ff4d4f;
-  color: #fff;
+  background-color: #fff1f0;
+  color: #ff4d4f;
 }
 
+/* 修改表单弹窗样式 - 自适应设备尺寸 */
 .form-modal {
   position: fixed;
   top: 0;
@@ -111,111 +174,209 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 999;
+  align-items: center;
+  padding: 20rpx; /* 确保与屏幕边缘有距离 */
 }
 
 .form-content {
-  width: 90%;
-  max-height: 90vh;
+  width: 92%;
+  max-height: calc(100vh - 180rpx); /* 减去上下边距和tabbar高度 */
   background-color: #fff;
-  border-radius: 10rpx;
-  padding: 40rpx;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  box-sizing: border-box;
   overflow-y: auto;
+  margin-bottom: 60rpx; /* 确保与底部tabbar有距离 */
 }
 
 .form-title {
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 30rpx;
   text-align: center;
+  margin-bottom: 30rpx;
 }
 
 .form-item {
-  margin-bottom: 30rpx;
+  margin-bottom: 25rpx;
 }
 
 .form-label {
-  font-size: 28rpx;
+  font-size: 30rpx;
   color: #333;
-  margin-bottom: 10rpx;
+  margin-bottom: 12rpx;
+  font-weight: 500;
 }
 
-.form-input {
+/* 修复输入框样式 */
+textarea.form-input {
   width: 100%;
-  height: 80rpx;
+  min-height: 120rpx; /* 减小默认高度 */
   border: 1rpx solid #ddd;
-  border-radius: 6rpx;
-  padding: 0 20rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
-}
-
-.form-textarea {
-  width: 100%;
-  height: 200rpx;
-  border: 1rpx solid #ddd;
-  border-radius: 6rpx;
+  border-radius: 8rpx;
   padding: 20rpx;
-  font-size: 28rpx;
   box-sizing: border-box;
+  font-size: 28rpx;
+  line-height: 1.6;
 }
 
+/* 问题输入框 */
+textarea.form-input.question {
+  min-height: 120rpx;
+  max-height: 200rpx; /* 限制最大高度 */
+}
+
+/* 答案输入框 */
+textarea.form-input.answer {
+  min-height: 180rpx;
+  max-height: 300rpx; /* 限制最大高度 */
+}
+
+/* 关键词输入区域 */
 .keyword-input-box {
   display: flex;
-  margin-bottom: 20rpx;
+  margin-bottom: 15rpx;
+  align-items: center;
 }
 
 .keyword-input {
   flex: 1;
-  height: 80rpx;
+  height: 70rpx; /* 减小高度 */
   border: 1rpx solid #ddd;
-  border-radius: 6rpx;
+  border-radius: 8rpx;
   padding: 0 20rpx;
-  font-size: 28rpx;
   box-sizing: border-box;
+  font-size: 28rpx;
 }
 
 .keyword-add-btn {
-  width: 120rpx;
-  height: 80rpx;
+  width: 140rpx; /* 减小宽度 */
+  height: 70rpx; /* 减小高度 */
+  line-height: 70rpx;
   background-color: #07C160;
   color: #fff;
   font-size: 28rpx;
-  text-align: center;
-  line-height: 80rpx;
-  margin-left: 20rpx;
-  border-radius: 6rpx;
+  margin-left: 20rpx !important;
+  padding: 0;
+  border-radius: 8rpx;
+}
+
+/* 关键词列表 */
+.keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10rpx;
+  max-height: 150rpx; /* 限制最大高度 */
+  overflow-y: auto;
+}
+
+.keyword {
+  background-color: #f0f9f4;
+  color: #07C160;
+  font-size: 26rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 30rpx;
+  margin-right: 12rpx;
+  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
 }
 
 .keyword-delete {
-  margin-left: 10rpx;
+  margin-left: 8rpx;
   font-size: 24rpx;
-  color: #ff4d4f;
+  color: #999;
 }
 
-.form-buttons {
+/* 表单按钮区域 */
+.form-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 40rpx;
+  margin-top: 30rpx;
+}
+
+/* 修复嵌套规则错误 */
+.form-actions .submit {
+  margin-left: 10rpx;
 }
 
 .form-btn {
   width: 45%;
   height: 80rpx;
   line-height: 80rpx;
-  font-size: 28rpx;
-  border-radius: 6rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  padding: 0;
 }
 
 .cancel {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f5f5f5;
+  color: #666;
 }
 
 .submit {
   background-color: #07C160;
   color: #fff;
+}
+
+/* 适配不同设备高度 */
+@media screen and (max-height: 700px) {
+  .form-content {
+    max-height: calc(100vh - 140rpx);
+    padding: 25rpx;
+  }
+  
+  textarea.form-input.question {
+    min-height: 100rpx;
+  }
+  
+  textarea.form-input.answer {
+    min-height: 150rpx;
+  }
+}
+
+/* 适配iPhone X等带有安全区域的设备 */
+@supports (padding-bottom: constant(safe-area-inset-bottom)) {
+  .form-modal {
+    padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+  }
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .form-modal {
+    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  }
+}
+
+/* 重置按钮的默认样式 */
+button::after {
+  border: none;
+}
+
+/* 确保底部导航固定 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx;
+  background-color: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+/* 适配iPhone X等机型底部安全区域 */
+@supports (padding-bottom: constant(safe-area-inset-bottom)) {
+  .bottom-bar {
+    padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+  }
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-bar {
+    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  }
 } 
