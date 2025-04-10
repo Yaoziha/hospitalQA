@@ -124,9 +124,42 @@ Page({
     }).then(res => {
       wx.hideLoading();
       if (res.result && res.result.success) {
-        this.setData({
-          qaList: res.result.data
+        const qaList = res.result.data.map(item => {
+          // 如果答案是HTML格式，确保它能被rich-text正确解析
+          if (item.answer && typeof item.answer === 'string') {
+            // 处理可能的HTML实体编码问题
+            item.answer = item.answer.replace(/&amp;/g, '&')
+                                     .replace(/&lt;/g, '<')
+                                     .replace(/&gt;/g, '>')
+                                     .replace(/&quot;/g, '"')
+                                     .replace(/&#39;/g, "'");
+            
+            // 使用更强大的正则表达式替换所有img标签的样式
+            item.answer = item.answer.replace(/<img[^>]*>/g, (match) => {
+              // 移除现有的style属性
+              let cleanedTag = match.replace(/\sstyle="[^"]*"/g, '');
+              // 添加我们的固定样式
+              return cleanedTag.replace(/<img/, '<img style="width:40rpx;height:40rpx;display:inline-block;vertical-align:middle;"');
+            });
+          }
+          return item;
         });
+        
+        this.setData({
+          qaList: qaList
+        });
+        
+        // 添加延时，确保列表渲染完成后滚动到底部
+        setTimeout(() => {
+          wx.createSelectorQuery().select('.qa-list').boundingClientRect(rect => {
+            if (rect && rect.height > 0) {
+              wx.pageScrollTo({
+                scrollTop: rect.height,
+                duration: 0
+              });
+            }
+          }).exec();
+        }, 300);
       } else {
         wx.showToast({
           title: '获取问题失败',

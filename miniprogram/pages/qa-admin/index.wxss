@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 20rpx 20rpx 120rpx 20rpx; /* 增加底部padding，为底部导航留出空间 */
+  padding: 20rpx 20rpx 160rpx 20rpx; /* 增加底部padding */
 }
 
 /* 添加非管理员提示样式 */
@@ -76,94 +76,120 @@
 }
 
 .qa-list {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* 增强iOS滚动体验 */
-  padding-bottom: 120rpx; /* 确保内容底部有足够空间 */
+  padding: 20rpx;
+  padding-bottom: 80rpx; /* 增加底部padding */
 }
 
 .qa-item {
+  margin-bottom: 30rpx;
   background-color: #fff;
-  border-radius: 12rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
-  position: relative;
+  border-radius: 10rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  max-width:96vw;
+}
+.qa-item:last-child {
+  margin-bottom: 120rpx; /* 增加底部边距 */
 }
 
-.qa-content {
-  margin-bottom: 20rpx;
+.qa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #07c16082;
+  border-bottom: 1px solid #eee;
 }
 
 .qa-question {
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 15rpx;
-  line-height: 1.4;
+  flex: 1;
 }
 
-.qa-answer {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 15rpx;
-  line-height: 1.5;
-  word-break: break-all;
-}
-
-.qa-keywords {
+.qa-actions {
   display: flex;
-  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.action-btn {
+  padding: 10rpx 20rpx;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  color: #fff;
+}
+
+.edit {
+  background-color: #07c160;
+}
+
+.delete {
+  background-color: #ff4d4f;
+}
+
+.qa-answer-container {
+  padding: 20rpx;
+  max-height: 400rpx;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+/* 富文本内容样式 */
+.rich-text-content {
+  width: 100%;
+  line-height: 1.6;
+  font-size: 28rpx;
+}
+
+/* 确保富文本中的图片不超出容器且适当缩小 */
+.rich-text-content image {
+  max-width: 90% !important;
+  height: auto !important;
+  display: block;
+  margin: 10rpx auto;
+}
+
+/* 富文本中的表格样式 */
+.rich-text-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10rpx 0;
+}
+
+.rich-text-content td, 
+.rich-text-content th {
+  border: 1px solid #ddd;
+  padding: 8rpx;
+  font-size: 28rpx;
+}
+
+/* 关键词样式 */
+.qa-keywords {
+  padding: 10rpx 20rpx 20rpx;
+  display: flex;
   align-items: center;
-  margin-top: 20rpx;
+  flex-wrap: wrap;
+  border-top: 1px solid #eee;
 }
 
 .keyword-label {
-  font-size: 24rpx;
-  color: #999;
+  font-size: 26rpx;
+  color: #666;
   margin-right: 10rpx;
 }
 
 .keyword-list {
   display: flex;
   flex-wrap: wrap;
+  gap: 10rpx;
 }
 
 .keyword {
-  background-color: #f0f9f4;
-  color: #07C160;
   font-size: 24rpx;
+  background-color: #f0f0f0;
   padding: 6rpx 16rpx;
-  border-radius: 20rpx;
-  margin-right: 10rpx;
-  margin-bottom: 10rpx;
-  display: flex;
-  align-items: center;
-}
-
-.qa-actions {
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1rpx solid #f0f0f0;
-  padding-top: 20rpx;
-  margin-top: 10rpx;
-}
-
-.action-btn {
-  padding: 10rpx 30rpx;
-  font-size: 26rpx;
   border-radius: 30rpx;
-  margin-left: 20rpx;
-}
-
-.edit {
-  background-color: #f0f9f4;
-  color: #07C160;
-}
-
-.delete {
-  background-color: #fff1f0;
-  color: #ff4d4f;
+  color: #666;
 }
 
 /* 修改表单弹窗样式 - 自适应设备尺寸 */

@@ -99,14 +99,28 @@ Component({
       
       // 处理图片链接问题
       if (richtext && typeof richtext === 'string') {
-        // 查找所有云存储图片链接并替换为临时链接
+        // 首先解码HTML实体
+        richtext = richtext.replace(/&amp;/g, '&')
+                          .replace(/&lt;/g, '<')
+                          .replace(/&gt;/g, '>')
+                          .replace(/&quot;/g, '"')
+                          .replace(/&#39;/g, "'");
+        
+        // 处理图片样式，添加样式限制宽度
+        richtext = richtext.replace(/<img/g, '<img style="max-width:100%;height:auto;"');
+        
+        // 查找所有云存储图片链接
         const cloudImgRegex = /https:\/\/\S+?-cloud\S+?\.tcb\.qcloud\.la\/\S+?(?=["'\s])/g;
         const fileIDs = [];
         let match;
         
         // 收集所有云存储图片ID
         while ((match = cloudImgRegex.exec(richtext)) !== null) {
-          fileIDs.push(match[0]);
+          // 清理URL，移除查询参数
+          let fileID = match[0].split('?')[0];
+          if (!fileIDs.includes(fileID)) {
+            fileIDs.push(fileID);
+          }
         }
         
         if (fileIDs.length > 0) {
@@ -122,8 +136,10 @@ Component({
               let newContent = richtext;
               res.fileList.forEach(file => {
                 if (file.tempFileURL) {
-                  // 使用正则表达式替换所有匹配的链接
-                  const regex = new RegExp(file.fileID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                  // 使用正则表达式替换所有匹配的链接（包括带查询参数的版本）
+                  const baseFileID = file.fileID.split('?')[0];
+                  const escapedFileID = baseFileID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                  const regex = new RegExp(escapedFileID + '(\\?[^"\'\\s]*)?', 'g');
                   newContent = newContent.replace(regex, file.tempFileURL);
                 }
               });
