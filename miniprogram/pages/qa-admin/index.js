@@ -1,5 +1,7 @@
 const app = getApp();
 
+let richText = null;  // 富文本编辑器实例
+
 Page({
   data: {
     qaList: [],
@@ -296,7 +298,92 @@ Page({
     });
   },
 
-  // 提交表单
+  // 编辑器初始化完成时触发
+  onEditorReady: function() {
+    console.log('[onEditorReady callback]');
+    richText = this.selectComponent('#richText');
+    console.log('富文本编辑器实例:', richText);
+    
+    // 如果是编辑模式，设置编辑器内容
+    if (this.data.isEditing && this.data.currentQA.answer) {
+      console.log('设置编辑器内容:', this.data.currentQA.answer);
+      setTimeout(() => {
+        if (richText && richText.setContents) {
+          richText.setContents(this.data.currentQA.answer);
+        }
+      }, 300); // 延迟设置内容，确保编辑器已完全初始化
+    }
+  },
+  
+  // 插入图片事件
+  insertImageEvent: function() {
+    console.log('插入图片事件触发');
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      success: res => {
+        let path = res.tempFiles[0].tempFilePath;
+        
+        // 先上传图片到云存储
+        wx.showLoading({
+          title: '上传图片中',
+        });
+        
+        const cloudPath = `qa_images/${Date.now()}_${Math.random().toString(36).substr(2, 8)}.${path.match(/\.([^.]+)$/)[1] || 'png'}`;
+        
+        wx.cloud.uploadFile({
+          cloudPath: cloudPath,
+          filePath: path,
+          success: res => {
+            const fileID = res.fileID;
+            
+            // 调用子组件方法插入图片
+            if (richText && richText.insertImageMethod) {
+              richText.insertImageMethod(fileID).then(res => {
+                console.log('[insert image success callback]=>', res);
+                wx.hideLoading();
+              }).catch(res => {
+                console.error('[insert image fail callback]=>', res);
+                wx.hideLoading();
+                wx.showToast({
+                  title: '插入图片失败',
+                  icon: 'none'
+                });
+              });
+            } else {
+              wx.hideLoading();
+              wx.showToast({
+                title: '编辑器未准备好',
+                icon: 'none'
+              });
+            }
+          },
+          fail: err => {
+            console.error('上传图片失败:', err);
+            wx.hideLoading();
+            wx.showToast({
+              title: '上传图片失败',
+              icon: 'none'
+            });
+          }
+        });
+      }
+    });
+  },
+  
+  // 获取编辑器内容
+  getEditorContent: function(e) {
+    console.log('获取编辑器内容:', e.detail);
+    
+    // 更新当前问答的答案
+    if (e.detail && e.detail.value && e.detail.value.html) {
+      this.setData({
+        'currentQA.answer': e.detail.value.html
+      });
+    }
+  },
+
+  // 修改提交表单方法，添加富文本内容获取
   submitForm: function() {
     const { currentQA, isEditing } = this.data;
     
@@ -309,7 +396,27 @@ Page({
       return;
     }
     
-    if (!currentQA.answer.trim()) {
+    // 如果富文本编辑器实例存在，尝试获取内容
+    if (richText) {
+      // 触发获取内容事件，内容会通过 getEditorContent 回调获取
+      richText.getEditorContent();
+      
+      // 由于获取内容是异步的，这里添加一个延迟，确保内容已经更新
+      setTimeout(() => {
+        this._submitFormWithContent();
+      }, 300);
+    } else {
+      // 如果富文本编辑器实例不存在，直接提交
+      this._submitFormWithContent();
+    }
+  },
+  
+  // 实际提交表单的方法
+  _submitFormWithContent: function() {
+    const { currentQA, isEditing } = this.data;
+    
+    // 再次验证答案
+    if (!currentQA.answer || !currentQA.answer.trim()) {
       wx.showToast({
         title: '请输入答案',
         icon: 'none'

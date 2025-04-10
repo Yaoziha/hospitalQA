@@ -379,4 +379,11 @@ button::after {
   .bottom-bar {
     padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   }
+}
+
+/* 添加富文本编辑器容器样式 */
+.rich-editor-container {
+  margin: 20rpx 0;
+  border-radius: 8rpx;
+  overflow: hidden;
 } 
