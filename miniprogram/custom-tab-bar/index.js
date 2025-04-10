@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: yaozihan
+ * @Date: 2025-03-24 15:44:57
+ * @LastEditors: yaozihan
+ * @LastEditTime: 2025-04-10 17:26:52
+ */
 const app = getApp();
 
 Component({
@@ -54,7 +62,7 @@ Component({
       if (isAdmin === true) {
         tabList.push({
           pagePath: "/pages/qa-admin/index",
-          text: "管理",
+          text: "问答管理",
           iconPath: "/images/tabbar/venue.png",
           selectedIconPath: "/images/tabbar/venue-active.png"
         });
