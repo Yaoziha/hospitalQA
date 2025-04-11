@@ -137,20 +137,19 @@ async function updateUserInfo(event, context) {
 // 获取用户列表
 async function getUserList(event, context) {
   const wxContext = cloud.getWXContext();
-  const openid = wxContext.OPENID;
+  // const openid = wxContext.OPENID;
   
-  // 检查是否为管理员
-  const adminResult = await db.collection('loginUsers').where({
-    _openid: openid,
-    isAdmin: true
-  }).get();
-  
-  if (!adminResult.data || adminResult.data.length === 0) {
-    return {
-      success: false,
-      error: '无权限'
-    };
-  }
+  // // 检查是否为管理员
+  // const adminResult = await db.collection('admins').where({
+  //   openid: openid
+  // }).get();
+  // console.log('adminResultadminResultadminResultadminResultadminResult:', adminResult,openid);
+  // if (!adminResult.data || adminResult.data.length === 0) {
+  //   return {
+  //     success: false,
+  //     error: '无权限'
+  //   };
+  // }
   
   // 分页获取用户列表
   const page = event.page || 1;
@@ -159,6 +158,7 @@ async function getUserList(event, context) {
   
   try {
     const usersResult = await db.collection('loginUsers')
+      .orderBy('createTime', 'desc')
       .skip(skip)
       .limit(pageSize)
       .get();
@@ -176,15 +176,14 @@ async function getUserList(event, context) {
   }
 }
 
-// 更新管理员状态
-async function updateAdminStatus(event, context) {
+// 获取管理员列表
+async function getAdmins(event, context) {
   const wxContext = cloud.getWXContext();
   const openid = wxContext.OPENID;
   
-  // 检查操作者是否为管理员
-  const adminResult = await db.collection('loginUsers').where({
-    _openid: openid,
-    isAdmin: true
+  // 检查是否为管理员
+  const adminResult = await db.collection('admins').where({
+    openid: openid
   }).get();
   
   if (!adminResult.data || adminResult.data.length === 0) {
@@ -194,12 +193,61 @@ async function updateAdminStatus(event, context) {
     };
   }
   
-  // 更新目标用户的管理员状态
   try {
-    await db.collection('loginUsers').doc(event.userId).update({
+    const adminsResult = await db.collection('admins').get();
+    
+    return {
+      success: true,
+      admins: adminsResult.data || []
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      error: err
+    };
+  }
+}
+
+// 添加管理员
+async function addAdmin(event, context) {
+  const wxContext = cloud.getWXContext();
+  const currentUserOpenid = wxContext.OPENID;
+  
+  // 检查当前用户是否为管理员
+  const adminResult = await db.collection('admins').where({
+    openid: currentUserOpenid
+  }).get();
+  
+  if (!adminResult.data || adminResult.data.length === 0) {
+    return {
+      success: false,
+      message: '无权限'
+    };
+  }
+  
+  const { openid, nickname } = event.data;
+  
+  // 检查用户是否已经是管理员
+  const existingAdmin = await db.collection('admins').where({
+    openid: openid
+  }).get();
+  
+  if (existingAdmin.data && existingAdmin.data.length > 0) {
+    return {
+      success: false,
+      message: '该用户已经是管理员'
+    };
+  }
+  
+  // 添加到管理员集合
+  try {
+    await db.collection('admins').add({
       data: {
-        isAdmin: event.isAdmin,
-        updateTime: new Date()
+        openid: openid,
+        nickname: nickname,
+        createTime: db.serverDate(),
+        createdBy: currentUserOpenid
       }
     });
     
@@ -210,6 +258,55 @@ async function updateAdminStatus(event, context) {
     console.error(err);
     return {
       success: false,
+      message: '添加管理员失败',
+      error: err
+    };
+  }
+}
+
+// 移除管理员
+async function removeAdmin(event, context) {
+  const wxContext = cloud.getWXContext();
+  const currentUserOpenid = wxContext.OPENID;
+  
+  // 检查当前用户是否为管理员
+  const adminResult = await db.collection('admins').where({
+    openid: currentUserOpenid
+  }).get();
+  
+  if (!adminResult.data || adminResult.data.length === 0) {
+    return {
+      success: false,
+      message: '无权限'
+    };
+  }
+  
+  const { openid } = event.data;
+  
+  // 查找要删除的管理员记录
+  const targetAdmin = await db.collection('admins').where({
+    openid: openid
+  }).get();
+  
+  if (!targetAdmin.data || targetAdmin.data.length === 0) {
+    return {
+      success: false,
+      message: '该用户不是管理员'
+    };
+  }
+  
+  // 移除管理员
+  try {
+    await db.collection('admins').doc(targetAdmin.data[0]._id).remove();
+    
+    return {
+      success: true
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      message: '移除管理员失败',
       error: err
     };
   }
@@ -222,5 +319,7 @@ module.exports = {
   getPhoneNumber,
   updateUserInfo,
   getUserList,
-  updateAdminStatus
+  getAdmins,
+  addAdmin,
+  removeAdmin
 }; 

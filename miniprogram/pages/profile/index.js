@@ -344,7 +344,6 @@ Page({
   // 获取用户列表
   fetchUserList: function() {
     const that = this;
-    const db = wx.cloud.database();
     
     wx.showLoading({
       title: '加载中',
@@ -352,31 +351,62 @@ Page({
     
     console.log('开始获取用户列表，页码:', that.data.currentPage, '每页数量:', that.data.pageSize);
     
-    // 使用云函数获取用户列表，绕过权限限制
+    // 先获取管理员列表
     wx.cloud.callFunction({
       name: 'quickstartFunctions',
       data: {
-        type: 'getUserList',
-        page: that.data.currentPage,
-        pageSize: that.data.pageSize
+        type: 'getAdmins'
       }
-    }).then(res => {
-      wx.hideLoading();
-      
-      if (res.result) {
-        console.log('获取用户列表成功，数量:', res.result.users);
+    }).then(adminRes => {
+      if (adminRes.result && adminRes.result.success) {
+        // 提取所有管理员的openid
+        console.log('管理员列表:', adminRes);
+        const adminOpenids = adminRes.result.data.map(admin => admin.openid);
         
-        // 检查是否有更多用户
-        const hasMore = res.result.users.length === that.data.pageSize;
-        
-        that.setData({
-          userList: res.result.users,
-          hasMoreUsers: hasMore
+        // 获取用户列表
+        return wx.cloud.callFunction({
+          name: 'quickstartFunctions',
+          data: {
+            type: 'getUserList',
+            page: that.data.currentPage,
+            pageSize: that.data.pageSize
+          }
+        }).then(res => {
+          wx.hideLoading();
+          
+          if (res.result && res.result.success) {
+            
+            // 为用户列表添加isAdmin标记
+            const userList = res.result.users.map(user => {
+              const userOpenid = user._openid || user.openid;
+              console.log('2222222:', adminOpenids,userOpenid);
+              return {
+                ...user,
+                isAdmin: adminOpenids.includes(userOpenid)
+              };
+            });
+            
+            console.log('处理后的用户列表:', userList);
+            
+            // 检查是否有更多用户
+            const hasMore = userList.length === that.data.pageSize;
+            
+            that.setData({
+              userList: userList,
+              hasMoreUsers: hasMore
+            });
+          } else {
+            console.error('获取用户列表失败', res);
+            wx.showToast({
+              title: '获取用户列表失败',
+              icon: 'none'
+            });
+          }
         });
       } else {
-        console.error('获取用户列表失败，返回结果格式不正确', res);
+        console.error('获取管理员列表失败', adminRes);
         wx.showToast({
-          title: '获取用户列表失败',
+          title: '获取管理员列表失败',
           icon: 'none'
         });
       }
@@ -390,39 +420,77 @@ Page({
     });
   },
 
-  // 切换用户管理员状态
+  // 切换管理员状态
   toggleAdminStatus: function(e) {
-    const userId = e.currentTarget.dataset.id;
-    const isAdmin = e.currentTarget.dataset.isAdmin;
     const that = this;
+    const id = e.currentTarget.dataset.id;
+    const isAdmin = e.currentTarget.dataset.isAdmin;
+    
+    // 找到对应的用户
+    const user = that.data.userList.find(item => item._id === id);
+    if (!user) {
+      wx.showToast({
+        title: '用户不存在',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    const openid = user._openid || user.openid;
+    const nickname = user.userInfo.nickName || '微信用户';
     
     wx.showModal({
       title: isAdmin ? '移除管理员' : '设为管理员',
-      content: isAdmin ? '确定要移除该用户的管理员权限吗？' : '确定要将该用户设为管理员吗？',
-      success: (res) => {
+      content: isAdmin ? `确定要移除 ${nickname} 的管理员权限吗？` : `确定要将 ${nickname} 设为管理员吗？`,
+      success: function(res) {
         if (res.confirm) {
           wx.showLoading({
             title: '处理中',
           });
           
-          // 直接更新数据库
-          const db = wx.cloud.database();
-          
-          db.collection('loginUsers').doc(userId).update({
+          // 调用云函数添加或移除管理员
+          wx.cloud.callFunction({
+            name: 'quickstartFunctions',
             data: {
-              isAdmin: !isAdmin,
-              updateTime: db.serverDate()
+              type: isAdmin ? 'removeAdmin' : 'addAdmin',
+              data: {
+                openid: openid,
+                nickname: nickname
+              }
             }
-          }).then(() => {
+          }).then(res => {
             wx.hideLoading();
             
-            wx.showToast({
-              title: '操作成功',
-              icon: 'success'
-            });
-            
-            // 刷新用户列表
-            that.fetchUserList();
+            if (res.result && res.result.success) {
+              wx.showToast({
+                title: isAdmin ? '已移除管理员权限' : '已设为管理员',
+                icon: 'success'
+              });
+              
+              // 刷新用户列表
+              that.fetchUserList();
+              
+              // 如果是当前用户，更新本地存储和页面状态
+              const currentOpenid = wx.getStorageSync('openid');
+              if (openid === currentOpenid) {
+                wx.setStorageSync('isAdmin', !isAdmin);
+                that.setData({
+                  isAdmin: !isAdmin
+                });
+                
+                // 如果移除了自己的管理员权限，需要隐藏管理员功能区域
+                if (isAdmin) {
+                  that.setData({
+                    userList: []
+                  });
+                }
+              }
+            } else {
+              wx.showToast({
+                title: res.result && res.result.message || '操作失败',
+                icon: 'none'
+              });
+            }
           }).catch(err => {
             wx.hideLoading();
             console.error('操作失败', err);
