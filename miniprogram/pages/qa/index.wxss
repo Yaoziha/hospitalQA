@@ -1,6 +1,6 @@
 /* pages/qa/index.wxss */
 .container {
-  padding: 30rpx;
+  padding-bottom: 120rpx;
   background-color: #f6f6f6;
   min-height: 100vh;
   box-sizing: border-box;
@@ -90,20 +90,30 @@
 }
 
 .common-questions {
+  width: 100%;
+  padding: 20rpx;
+  box-sizing: border-box;
+  margin-bottom: 100rpx;
   background-color: #fff;
   border-radius: 10rpx;
-  padding: 30rpx;
-  margin-bottom: 40rpx;
 }
 
 .question-list {
+  width: 100%;
+  padding-bottom: 30rpx;
   display: flex;
   flex-direction: column;
 }
 
 .question-item {
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #eee;
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+  border-left: 6rpx solid #07c160;
+  word-break: break-all;
+  white-space: normal;
   font-size: 28rpx;
   color: #333;
 }
@@ -262,4 +272,16 @@ button::after {
   background-color: #f0f8ff;
   padding: 3px 8px;
   border-radius: 10px;
+}
+
+/* 底部导航栏适配 */
+.tabbar-placeholder {
+  height: 100rpx;
+  width: 100%;
+}
+
+/* 页面滚动区域 */
+.page-scroll {
+  height: calc(100vh - 100rpx);
+  width: 100%;
 } 
