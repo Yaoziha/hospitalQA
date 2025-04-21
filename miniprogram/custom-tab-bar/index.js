@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: yaozihan
+ * @Date: 2025-03-24 15:44:57
+ * @LastEditors: yaozihan
+ * @LastEditTime: 2025-04-10 17:57:49
+ */
 const app = getApp();
 
 Component({
@@ -11,6 +19,12 @@ Component({
         text: "宣教问答",
         iconPath: "/images/tabbar/home.png",
         selectedIconPath: "/images/tabbar/home-active.png"
+      },
+      {
+        pagePath: "/pages/profile/index",
+        text: "我的",
+        iconPath: "/images/tabbar/profile.png",
+        selectedIconPath: "/images/tabbar/profile_selected.png"
       }
     ],
     isAdmin: false
@@ -47,6 +61,12 @@ Component({
           text: "宣教问答",
           iconPath: "/images/tabbar/home.png",
           selectedIconPath: "/images/tabbar/home-active.png"
+        },
+        {
+          pagePath: "/pages/profile/index",
+          text: "我的",
+          iconPath: "/images/tabbar/profile.png",
+          selectedIconPath: "/images/tabbar/profile_selected.png"
         }
       ];
       
@@ -54,7 +74,7 @@ Component({
       if (isAdmin === true) {
         tabList.push({
           pagePath: "/pages/qa-admin/index",
-          text: "管理",
+          text: "问答管理",
           iconPath: "/images/tabbar/venue.png",
           selectedIconPath: "/images/tabbar/venue-active.png"
         });

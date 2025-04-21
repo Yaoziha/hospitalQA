@@ -232,3 +232,71 @@ page {
   font-size: 32rpx;
   color: #666;
 }
+
+/* 问答容器样式 */
+.qa-container {
+  padding: 20rpx;
+}
+
+.qa-item {
+  margin-bottom: 40rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.qa-question {
+  font-size: 32rpx;
+  font-weight: bold;
+  padding: 20rpx;
+  background-color: #f6f6f6;
+  border-bottom: 1px solid #eee;
+}
+
+.qa-answer-box {
+  padding: 20rpx;
+  max-height: 600rpx;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+/* 富文本内容样式 */
+.rich-text-content {
+  width: 100%;
+  line-height: 1.6;
+  font-size: 28rpx;
+}
+
+/* 确保富文本中的图片不超出容器且适当缩小 */
+.rich-text-content image {
+  max-width: 90% !important;
+  height: auto !important;
+  display: block;
+  margin: 10rpx auto;
+}
+
+/* 富文本中的表格样式 */
+.rich-text-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10rpx 0;
+}
+
+.rich-text-content td, 
+.rich-text-content th {
+  border: 1px solid #ddd;
+  padding: 8rpx;
+  font-size: 28rpx;
+}
+
+/* 列表样式 */
+.rich-text-content ul,
+.rich-text-content ol {
+  padding-left: 40rpx;
+}
+
+/* 段落样式 */
+.rich-text-content p {
+  margin: 10rpx 0;
+}

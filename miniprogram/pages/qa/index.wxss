@@ -1,6 +1,6 @@
 /* pages/qa/index.wxss */
 .container {
-  padding: 30rpx;
+  padding-bottom: 120rpx;
   background-color: #f6f6f6;
   min-height: 100vh;
   box-sizing: border-box;
@@ -90,20 +90,30 @@
 }
 
 .common-questions {
+  width: 100%;
+  padding: 20rpx;
+  box-sizing: border-box;
+  margin-bottom: 100rpx;
   background-color: #fff;
   border-radius: 10rpx;
-  padding: 30rpx;
-  margin-bottom: 40rpx;
 }
 
 .question-list {
+  width: 100%;
+  padding-bottom: 30rpx;
   display: flex;
   flex-direction: column;
 }
 
 .question-item {
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #eee;
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+  border-left: 6rpx solid #07c160;
+  word-break: break-all;
+  white-space: normal;
   font-size: 28rpx;
   color: #333;
 }
@@ -119,6 +129,7 @@
   font-size: 28rpx;
 }
 
+/* 答案弹窗样式 */
 .answer-modal {
   position: fixed;
   top: 0;
@@ -126,37 +137,64 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 999;
+  align-items: center;
 }
 
 .answer-content {
-  width: 80%;
+  width: 90%;
+  max-height: 90vh;
   background-color: #fff;
-  border-radius: 10rpx;
-  padding: 40rpx;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .answer-title {
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
   margin-bottom: 20rpx;
-  color: #333;
+  text-align: center;
 }
 
 .answer-text {
-  font-size: 28rpx;
-  color: #333;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 50vh;
+  padding: 20rpx 0;
+}
+
+/* 富文本内容样式 */
+.rich-text-content {
+  width: 100%;
   line-height: 1.6;
-  margin-bottom: 30rpx;
+  font-size: 28rpx;
+}
+
+/* 确保富文本中的图片不超出容器且适当缩小 */
+.rich-text-content image {
+  width: 40rpx !important;
+  height: 40rpx !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.answer-source {
+  font-size: 24rpx;
+  color: #999;
+  text-align: right;
+  margin: 20rpx 0;
 }
 
 .close-btn {
-  background-color: #07C160;
+  margin-top: 20rpx;
+  background-color: #07c160;
   color: #fff;
-  font-size: 28rpx;
+  font-size: 30rpx;
 }
 
 /* 重置按钮的默认样式 */
@@ -230,16 +268,20 @@ button::after {
   color: #fff;
 }
 
-.answer-source {
-  margin-top: 15px;
-  text-align: right;
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 12px;
-}
-
 .source-text {
   background-color: #f0f8ff;
   padding: 3px 8px;
   border-radius: 10px;
+}
+
+/* 底部导航栏适配 */
+.tabbar-placeholder {
+  height: 100rpx;
+  width: 100%;
+}
+
+/* 页面滚动区域 */
+.page-scroll {
+  height: calc(100vh - 100rpx);
+  width: 100%;
 } 

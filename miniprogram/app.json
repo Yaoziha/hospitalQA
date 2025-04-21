@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/qa/index",
     "pages/qa-admin/index",
-    "pages/admin-management/index"
+    "pages/admin-management/index",
+     "pages/profile/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
@@ -32,6 +33,12 @@
         "text": "管理",
         "iconPath": "images/tabbar/venue.png",
         "selectedIconPath": "images/tabbar/venue-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "images/tabbar/profile.png",
+        "selectedIconPath": "images/tabbar/profile_selected.png"
       }
     ]
   }

@@ -127,9 +127,29 @@ Page({
       }
     }).then(res => {
       wx.hideLoading();
-      if (res.result && res.result.success) {
+      if (res.result && res.result.data) {
+        // 处理富文本内容，确保正确显示
+        const qaList = res.result.data.map(item => {
+          // 如果答案是HTML格式，确保它能被rich-text正确解析
+          if (item.answer && typeof item.answer === 'string') {
+            // 处理可能的HTML实体编码问题
+            item.answer = item.answer.replace(/&amp;/g, '&')
+                                     .replace(/&lt;/g, '<')
+                                     .replace(/&gt;/g, '>')
+                                     .replace(/&quot;/g, '"')
+                                     .replace(/&#39;/g, "'");
+            
+            // 使用正则表达式替换所有img标签，添加固定宽高样式
+            item.answer = item.answer.replace(/<img[^>]*>/g, (match) => {
+              // 保留原始img标签的所有属性，但添加固定宽高样式
+              return match.replace(/<img/, '<img style="width:40rpx;height:40rpx;display:inline-block;vertical-align:middle;"');
+            });
+          }
+          return item;
+        });
+        
         this.setData({
-          qaList: res.result.data
+          qaList: qaList
         });
       } else {
         wx.showToast({
@@ -161,7 +181,7 @@ Page({
     });
   },
 
-  // 提交问题
+  // 提交问题查询
   submitQuestion: function() {
     const { inputQuestion } = this.data;
     if (!inputQuestion.trim()) {
@@ -172,20 +192,14 @@ Page({
       return;
     }
 
+    // 直接调用searchQA方法
     this.searchQuestion(inputQuestion);
-  },
-
-  // 选择预设问题
-  selectQuestion: function(e) {
-    const { question } = e.currentTarget.dataset;
-    this.setData({
-      inputQuestion: question
-    });
-    this.searchQuestion(question);
   },
 
   // 搜索问题
   searchQuestion: function(keyword) {
+    const that = this;
+    
     wx.showLoading({
       title: '查询中',
     });
@@ -215,27 +229,36 @@ Page({
     Promise.race([cloudPromise, timeoutPromise])
       .then(res => {
         wx.hideLoading();
+        console.log('搜索结果:', res);
+        
         if (res.result && res.result.success) {
           if (res.result.found) {
             // 显示找到的答案
-            this.setData({
+            that.setData({
               currentAnswer: res.result.data.answer,
               showAnswer: true,
               answerSource: res.result.data.source || 'database'
             });
-          } else {
-            // 没有找到答案，显示默认回答
-            this.setData({
-              currentAnswer: res.result.data.answer || '建议挂号看医生',
+          } else if (res.result.data && res.result.data.answer) {
+            // 没有找到精确匹配，但有AI回答
+            that.setData({
+              currentAnswer: res.result.data.answer,
               showAnswer: true,
-              answerSource: res.result.data.source || 'default'
+              answerSource: res.result.data.source || 'spark'
+            });
+          } else {
+            // 没有找到任何答案，显示默认回答
+            that.setData({
+              currentAnswer: '建议挂号看医生',
+              showAnswer: true,
+              answerSource: 'default'
             });
           }
         } else {
           console.error('查询失败:', res.result ? res.result.errMsg : '未知错误');
           
           // 显示默认回答
-          this.setData({
+          that.setData({
             currentAnswer: '建议挂号看医生',
             showAnswer: true,
             answerSource: 'default'
@@ -247,12 +270,94 @@ Page({
         console.error('查询失败:', err);
         
         // 显示默认回答
-        this.setData({
+        that.setData({
           currentAnswer: '建议挂号看医生',
           showAnswer: true,
           answerSource: 'default'
         });
       });
+  },
+
+  // 使用AI查询问题（添加这个函数）
+  queryAI: function(question) {
+    const that = this;
+    
+    // 调用云函数查询星火AI
+    wx.cloud.callFunction({
+      name: 'quickstartFunctions',
+      data: {
+        type: 'querySparkAI',
+        question: question
+      }
+    }).then(res => {
+      console.log('AI回答结果:', res);
+      if (res.result && res.result.success && res.result.answer) {
+        // AI回答成功
+        that.setData({
+          currentAnswer: res.result.answer,
+          showAnswer: true,
+          answerSource: 'spark'  // 设置为'spark'，表示由讯飞星火AI提供
+        });
+      } else {
+        // AI回答失败
+        wx.showToast({
+          title: '未找到相关回答',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      console.error('调用AI服务失败', err);
+      wx.showToast({
+        title: '查询失败，请稍后再试',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 添加图片点击事件处理函数
+  addImageClickEvent: function() {
+    const that = this;
+    // 获取富文本容器内的所有图片
+    wx.createSelectorQuery()
+      .selectAll('.answer-text .rich-text-content image')
+      .boundingClientRect(function(rects) {
+        // 为每个图片元素添加点击事件
+        if (rects && rects.length) {
+          rects.forEach(function(rect) {
+            rect.node && rect.node.addEventListener('tap', function(e) {
+              const src = e.target.dataset.src || e.target.src;
+              if (src) {
+                // 使用微信预览图片API
+                wx.previewImage({
+                  current: src,
+                  urls: [src]
+                });
+              }
+            });
+          });
+        }
+      })
+      .exec();
+  },
+
+  // 图片预览函数 - 用于直接在WXML中绑定的点击事件
+  previewImage: function(e) {
+    const src = e.currentTarget.dataset.src;
+    if (src) {
+      wx.previewImage({
+        current: src,
+        urls: [src]
+      });
+    }
+  },
+
+  // 选择预设问题
+  selectQuestion: function(e) {
+    const { question } = e.currentTarget.dataset;
+    this.setData({
+      inputQuestion: question
+    });
+    this.searchQuestion(question);
   },
 
   // 关闭答案

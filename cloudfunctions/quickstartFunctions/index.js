@@ -4,7 +4,7 @@
  * @Author: yaozihan
  * @Date: 2025-03-24 09:50:44
  * @LastEditors: yaozihan
- * @LastEditTime: 2025-03-25 15:06:01
+ * @LastEditTime: 2025-04-10 17:46:33
  */
 const getOpenId = require('./getOpenId/index');
 const getQAList = require('./getQAList/index');
@@ -18,6 +18,9 @@ const removeAdmin = require('./removeAdmin/index');
 
 // 引入优化后的 QA 服务模块
 const qaService = require('./qaService/index');
+
+// 引入用户服务模块
+const userService = require('./userService/index');
 
 // 云函数入口文件
 const cloud = require('wx-server-sdk');
@@ -72,6 +75,19 @@ exports.main = async (event, context) => {
           _id: event.data.id
         }
       }, context);
+    // 用户服务相关功能
+    case 'checkLoginStatus':
+      return await userService.checkLoginStatus(event, context);
+    case 'login':
+      return await userService.login(event, context);
+    case 'getPhoneNumber':
+      return await userService.getPhoneNumber(event, context);
+    case 'updateUserInfo':
+      return await userService.updateUserInfo(event, context);
+    case 'getUserList':
+      return await userService.getUserList(event, context);
+    case 'updateAdminStatus':
+      return await userService.updateAdminStatus(event, context);
     default:
       return {
         success: false,
